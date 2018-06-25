@@ -13,6 +13,7 @@ docxtpl==0.4.12
 doit==0.31.1
 doit-xtended==0.0.6
 entrypoints==0.2.3
+fastcache==1.0.2
 feather-format==0.4.0
 html5lib==1.0.1
 ipykernel==4.8.2
@@ -34,6 +35,7 @@ mistune==0.8.3
 mkl-fft==1.0.0
 mkl-random==1.0.1
 more-itertools==4.2.0
+mpmath==1.0.0
 nbconvert==5.3.1
 nbformat==4.4.0
 notebook==5.5.0
@@ -64,6 +66,7 @@ Send2Trash==1.5.0
 simplegeneric==0.8.1
 six==1.11.0
 statsmodels==0.9.0
+sympy==1.1.1
 terminado==0.8.1
 testpath==0.3.1
 tornado==5.0.2
