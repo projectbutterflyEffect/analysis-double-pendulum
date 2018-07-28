@@ -17,7 +17,7 @@ def task_data():
 
     functions = collect_functions('src.data')
 
-    outpath = r"data\processed"
+    outpath = r"data/processed"
     for func_name, func, src_file in functions:
         outfiles = target_filenames(outpath,func,suffix='_')
 
@@ -42,7 +42,7 @@ def task_features():
 
     functions = collect_functions('src.features')
 
-    outpath = r'data\processed'
+    outpath = r'data/processed'
 
     for name, func, src in functions:
         outfiles = target_filenames(outpath, func, suffix='_')
@@ -86,7 +86,7 @@ def task_figures():
 
     figures = collect_functions('src.visualization', exclude_module=['utils'])
 
-    outpath = r'reports\figures'
+    outpath = r'reports/figures'
 
     for name, func, src in figures:
         outfiles = target_filenames(outpath, func, suffix='png')
@@ -156,4 +156,4 @@ if __name__ == '__main__':
     from doit.doit_cmd import DoitMain
 
     d = DoitMain(ModuleTaskLoader(globals()))
-    d.run(['list','--all'])
+    d.run(['figures'])
