@@ -156,4 +156,4 @@ if __name__ == '__main__':
     from doit.doit_cmd import DoitMain
 
     d = DoitMain(ModuleTaskLoader(globals()))
-    d.run(['figures'])
+    d.run(['-s','models:prediction'])

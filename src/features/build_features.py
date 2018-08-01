@@ -1,7 +1,7 @@
 from tostools.numpy import rolling_window
 from doit_xtended.linkedtasks import creates_files
 import pathlib
-import pandas as pd
+import numpy as np
 
 def _continuous_split(data, val_ratio=0.1, test_ratio=0.1):
 
@@ -16,27 +16,27 @@ def _continuous_split(data, val_ratio=0.1, test_ratio=0.1):
 
     assert n > 0
 
-    return dict(train = data.iloc[:n_train],
-                validate = data.iloc[n_train:n_train+n_val],
-                test = data.iloc[n_train+n_val:])
+    return dict(train = data.iloc[:n_train,:],
+                validate = data.iloc[n_train:n_train+n_val,:],
+                test = data.iloc[n_train+n_val:,:])
 
 def _transpose_dataset(data, n_window=200):
 
     for k, val in data.items():
-        data[k] = pd.DataFrame(rolling_window(val.values, n_window))
+        data[k] = rolling_window(val.values, n_window)[:,:,::-1]
 
     return data
 
-@creates_files('train.pkl','validate.pkl','test.pkl')
+@creates_files('train.npy','validate.npy','test.npy')
 def prepare_data(series1, targets):
 
-    data = _continuous_split(series1['w1'])
-    data = _transpose_dataset(data, 50)
+    data = _continuous_split(series1.iloc[:,1:],test_ratio=0.15)
+    data = _transpose_dataset(data, 40)
 
     for fname in targets:
 
         fname = pathlib.Path(fname)
-        data[fname.stem].to_pickle(fname)
+        np.save(fname,data[fname.stem])
 
 
 

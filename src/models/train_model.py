@@ -1,29 +1,28 @@
-from tensorflow.contrib import learn
-from .lstm import _lstm_model
+from keras.models import Sequential
+from keras.layers import Dense, LSTM
 
-def lstm(train, validate):
+import numpy as np
 
-    y = train.iloc[:,0]
-    X = train.iloc[:,1:]
 
-    LOG_DIR = './ops_logs'
-    TIMESTEPS = 5
-    RNN_LAYERS = [{'steps': TIMESTEPS}]
-    DENSE_LAYERS = [10, 10]
-    TRAINING_STEPS = 100000
-    BATCH_SIZE = 100
-    PRINT_STEPS = TRAINING_STEPS / 100
+def _reshape_data(data):
+    y, X = data[:,:,0], data[:,:,1:][:,:,::-1]
+    X = np.reshape(X, (X.shape[0],1,np.prod(X.shape[1:])))
+    return X, y
 
-    regressor = learn.Estimator(model_fn=_lstm_model(TIMESTEPS, RNN_LAYERS, DENSE_LAYERS))
+def lstm(train, validate, targets):
 
-    validation_monitor = learn.monitors.ValidationMonitor(validate.iloc[:,0], validate.iloc[:,1:],
-                                                          every_n_steps=PRINT_STEPS,
-                                                          early_stopping_rounds=1000)
+    X, y = _reshape_data(train)
+    Xval, yval = _reshape_data(validate)
 
-    regressor.fit(X, y, monitors=[validation_monitor], #logdir=LOG_DIR,
-                                          # n_classes=0,
-                                          # verbose=1,
-                                          steps=TRAINING_STEPS,
-                                          # optimizer='Adagrad',
-                                          # learning_rate=0.03,
-                                          batch_size=BATCH_SIZE)
+    model = Sequential()
+
+    model.add(LSTM(40, input_shape=(None, X.shape[-1])))
+    model.add(Dense(4))
+    model.compile(loss='mean_absolute_error', optimizer='adam')
+
+    # x_train and y_train are Numpy arrays --just like in the Scikit-Learn API.
+    model.fit(X, y, epochs=30, batch_size=20,
+              validation_data=(Xval,yval))
+
+    model.save(targets[0], overwrite=True)
+
